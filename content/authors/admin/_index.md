@@ -44,7 +44,7 @@ education:
 social:
 - icon: envelope
   icon_pack: fas
-  link: mailto: hzimmer.mfa2021@london.edu '#contact'
+  link: mailto: hzimmer.mfa2021@london.edu
 - icon: github
   icon_pack: fab
   link: https://github.com/Hanna311
@@ -52,7 +52,7 @@ social:
 # To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.
 - icon: cv
 icon_pack: ai
-link: files/cv.pdf
+link: files/CV.pdf
 
 # Enter email to display Gravatar (if Gravatar enabled in Config)
 email: ""
