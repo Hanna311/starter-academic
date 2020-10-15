@@ -44,7 +44,7 @@ education:
 social:
 - icon: envelope
   icon_pack: fas
-  link: mailto: hzimmer.mfa2021@london.edu
+  link: hzimmer.mfa2021@london.edu
 - icon: github
   icon_pack: fab
   link: https://github.com/Hanna311
