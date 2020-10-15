@@ -42,9 +42,7 @@ education:
 #   For an email link, use "fas" icon pack, "envelope" icon, and a link in the
 #   form "mailto:your-email@example.com" or "#contact" for contact widget.
 social:
-- icon: envelope
-  icon_pack: fas
-  link: hzimmer.mfa2021@london.edu
+
 - icon: github
   icon_pack: fab
   link: https://github.com/Hanna311
@@ -52,7 +50,7 @@ social:
 # To enable, copy your resume/CV to `static/files/cv.pdf` and uncomment the lines below.
 - icon: cv
 icon_pack: ai
-link: files/CV.pdf
+link: files/cv.pdf
 
 # Enter email to display Gravatar (if Gravatar enabled in Config)
 email: ""
