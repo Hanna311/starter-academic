@@ -52,4 +52,6 @@ subtitle = ""
 
 ## 👋 Welcome to my Blog 
 
-I am Hanna and this is my website where you can find out a bit more about me and check out my R projects
+Hi, welcome to my personal portfolio website!
+
+Here you can see what I have been working on and learning in R or find out a bit more about me. 
