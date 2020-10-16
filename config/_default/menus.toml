@@ -15,13 +15,18 @@
 
 [[main]]
   name = "Projects"
-  url = "#content/projects/project1"
+  url = "#projects
   weight = 30
 
 [[main]]
   name = "Publications"
   url = "#featured"
   weight = 40
+
+[[main]]
+  name = "Project 1"  # A link title for your page.
+  url = "example/"  # The URL of your page.
+  weight = 50  # The position of your page in the menu.
 
 [[main]]
   name = "Contact"
