@@ -1,0 +1,315 @@
+---
+title: "Covid 19 Analysis"
+author: "Your name goes here"
+date: "2020-10-16"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+
+
+<div id="cdc-covid-19-public-use-data" class="section level1">
+<h1>CDC COVID-19 Public Use Data</h1>
+<pre class="r"><code># file contains 11 variables and 3.66m rows and is well over 380Mb. 
+# It will take time to download
+
+# URL link to CDC to download data
+url &lt;- &quot;https://data.cdc.gov/api/views/vbim-akqf/rows.csv?accessType=DOWNLOAD&quot;
+
+covid_data &lt;- vroom::vroom(url)%&gt;% # If vroom::vroom(url) doesn&#39;t work, use read_csv(url)
+  clean_names()</code></pre>
+<p>Given the data we have, I will produce two graphs that show death % rate:</p>
+<ol style="list-style-type: decimal">
+<li>by age group, sex, and whether the patient had co-morbidities or not</li>
+<li>by age group, sex, and whether the patient was admited to Intensive Care Unit (ICU) or not.</li>
+</ol>
+<pre class="r"><code>skim (covid_data)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-2">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">covid_data</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">4481062</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">11</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">8</td>
+</tr>
+<tr class="odd">
+<td align="left">Date</td>
+<td align="left">3</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">current_status</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">13</td>
+<td align="right">25</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">sex</td>
+<td align="right">12</td>
+<td align="right">1</td>
+<td align="right">4</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">age_group</td>
+<td align="right">93</td>
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">race_and_ethnicity_combined</td>
+<td align="right">12</td>
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">52</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">hosp_yn</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">icu_yn</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">death_yn</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">medcond_yn</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">4</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: Date</strong></p>
+<table>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="left">min</th>
+<th align="left">max</th>
+<th align="left">median</th>
+<th align="right">n_unique</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">cdc_report_dt</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="left">2020-01-01</td>
+<td align="left">2020-09-15</td>
+<td align="left">2020-07-04</td>
+<td align="right">255</td>
+</tr>
+<tr class="even">
+<td align="left">pos_spec_dt</td>
+<td align="right">2957494</td>
+<td align="right">0.34</td>
+<td align="left">2020-01-01</td>
+<td align="left">2020-09-28</td>
+<td align="left">2020-05-30</td>
+<td align="right">236</td>
+</tr>
+<tr class="odd">
+<td align="left">onset_dt</td>
+<td align="right">2113224</td>
+<td align="right">0.53</td>
+<td align="left">2020-01-01</td>
+<td align="left">2020-09-29</td>
+<td align="left">2020-06-24</td>
+<td align="right">273</td>
+</tr>
+</tbody>
+</table>
+<p>By Age group, sex, and morbidity</p>
+<pre class="r"><code>covid_data_clean_1 &lt;- covid_data %&gt;% 
+filter(death_yn!=&quot;Missing&quot;) %&gt;% 
+  filter(death_yn!=&quot;Unknown&quot;) %&gt;% 
+  filter(age_group!=&quot;Unknown&quot;) %&gt;% 
+  filter(sex!=&quot;Unknown&quot;) %&gt;%
+  filter(sex!=&quot;Missing&quot;) %&gt;% 
+  filter(medcond_yn!=&quot;Missing&quot;) %&gt;%
+  filter(medcond_yn!=&quot;Unknown&quot;) %&gt;%
+  filter(sex!=&quot;Other&quot;)</code></pre>
+<pre class="r"><code>covid_morb&lt;- covid_data_clean_1 %&gt;% 
+  group_by(age_group,death_yn,sex,medcond_yn) %&gt;%
+  summarise(count=n()) %&gt;% 
+  pivot_wider(names_from = death_yn, values_from = count) %&gt;% 
+  mutate(death_rate=(Yes/(Yes+No))) %&gt;% 
+  mutate(death_rate_perc=paste(round(100*death_rate, 1), &quot;%&quot;, sep=&quot;&quot;))
+
+covid_morb</code></pre>
+<pre><code>## # A tibble: 36 x 7
+## # Groups:   age_group, sex [18]
+##    age_group     sex    medcond_yn    No   Yes death_rate death_rate_perc
+##    &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt;      &lt;int&gt; &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;          
+##  1 0 - 9 Years   Female No          6623     3   0.000453 0%             
+##  2 0 - 9 Years   Female Yes         2434     6   0.00246  0.2%           
+##  3 0 - 9 Years   Male   No          6768     5   0.000738 0.1%           
+##  4 0 - 9 Years   Male   Yes         2758     6   0.00217  0.2%           
+##  5 10 - 19 Years Female No         20576     4   0.000194 0%             
+##  6 10 - 19 Years Female Yes         8328    13   0.00156  0.2%           
+##  7 10 - 19 Years Male   No         18226     4   0.000219 0%             
+##  8 10 - 19 Years Male   Yes         7465    16   0.00214  0.2%           
+##  9 20 - 29 Years Female No         41891     7   0.000167 0%             
+## 10 20 - 29 Years Female Yes        22301    79   0.00353  0.4%           
+## # … with 26 more rows</code></pre>
+<pre class="r"><code>covid_morb$medcond_yn_f = factor(covid_morb$medcond_yn, levels=c(&#39;Yes&#39;,&#39;No&#39;))
+
+morb.labs &lt;- c(&quot;Without comorbidities&quot;, &quot;With comorbidities&quot;)
+names(morb.labs) &lt;- c(medcond_yn_f=&quot;No&quot;, medcond_yn_f=&quot;Yes&quot;)
+
+ggplot(covid_morb, aes(x=death_rate,y=age_group))+
+  geom_col(alpha=0.8,fill=&quot;#6C7EA2&quot;)+
+  facet_grid(medcond_yn_f~sex, 
+               ,labeller=labeller(medcond_yn_f=morb.labs))+
+  labs(title=&quot;Covid death rate by age group, sex and presence of co-morbidities&quot;,x=&quot;&quot;,y=&quot;&quot;)+
+  scale_x_continuous(labels=scales::percent)+
+  geom_text(aes(label=death_rate_perc),nudge_x = 0.07, size=3)+
+  coord_fixed(ratio = 0.04)+
+   theme(strip.background = element_rect(
+     color=&quot;black&quot;, fill=&quot;grey&quot;, linetype=&quot;solid&quot;), panel.background = element_rect(fill = &quot;white&quot;),panel.grid=element_line(size=0.5, colour=&quot;#F1F1EB&quot;), panel.border = element_rect(fill=NA))</code></pre>
+<p><img src="/publication/Project1_files/figure-html/unnamed-chunk-4-1.png" width="648" style="display: block; margin: auto;" />
+By age group, sex and admissions to ICU</p>
+<pre class="r"><code>covid_data_clean_2 &lt;- covid_data %&gt;% 
+  filter(death_yn!=&quot;Missing&quot;) %&gt;% 
+  filter(death_yn!=&quot;Unknown&quot;) %&gt;% 
+  filter(age_group!=&quot;Unknown&quot;) %&gt;% 
+  filter(sex!=&quot;Unknown&quot;) %&gt;%
+  filter(sex!=&quot;Missing&quot;) %&gt;% 
+  filter(icu_yn!=&quot;Missing&quot;) %&gt;%
+  filter(icu_yn!=&quot;Unknown&quot;) %&gt;%
+  filter(medcond_yn!=&quot;Missing&quot;) %&gt;%
+  filter(medcond_yn!=&quot;Unknown&quot;) %&gt;%
+  filter(sex!=&quot;Other&quot;)
+         
+covid_icu&lt;- covid_data_clean_2 %&gt;% 
+  group_by(age_group,death_yn,sex,icu_yn) %&gt;%
+  summarise(count=n()) %&gt;% 
+  pivot_wider(names_from = death_yn, values_from = count) %&gt;% 
+  mutate(death_rate=(Yes/(Yes+No))) %&gt;% 
+  mutate(death_rate_perc=paste(round(100*death_rate, 1), &quot;%&quot;, sep=&quot;&quot;))
+
+covid_icu</code></pre>
+<pre><code>## # A tibble: 36 x 7
+## # Groups:   age_group, sex [18]
+##    age_group     sex    icu_yn    No   Yes death_rate death_rate_perc
+##    &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt;  &lt;int&gt; &lt;int&gt;      &lt;dbl&gt; &lt;chr&gt;          
+##  1 0 - 9 Years   Female No      3467     5   0.00144  0.1%           
+##  2 0 - 9 Years   Female Yes       49     2   0.0392   3.9%           
+##  3 0 - 9 Years   Male   No      3595    NA  NA        NA%            
+##  4 0 - 9 Years   Male   Yes       61     7   0.103    10.3%          
+##  5 10 - 19 Years Female No     12395     4   0.000323 0%             
+##  6 10 - 19 Years Female Yes       70     8   0.103    10.3%          
+##  7 10 - 19 Years Male   No     10991     3   0.000273 0%             
+##  8 10 - 19 Years Male   Yes       95    13   0.120    12%            
+##  9 20 - 29 Years Female No     29087    15   0.000515 0.1%           
+## 10 20 - 29 Years Female Yes      204    34   0.143    14.3%          
+## # … with 26 more rows</code></pre>
+<pre class="r"><code>covid_icu$icu_yn_f = factor(covid_icu$icu_yn, levels=c(&#39;Yes&#39;,&#39;No&#39;))
+
+icu.labs &lt;- c(&quot;Not Admitted to ICU&quot;, &quot;Admitted to ICU&quot;)
+names(icu.labs) &lt;- c(icu_yn_f=&quot;No&quot;, icu_yn_f=&quot;Yes&quot;)
+
+ggplot(covid_icu, aes(x=death_rate,y=age_group))+
+  geom_col(alpha=0.8,fill=&quot;#FF5B33&quot;)+
+  facet_grid(icu_yn_f~sex, 
+               , labeller=labeller(icu_yn_f=icu.labs))+
+  labs(title=&quot;Covid death rate by gender, age and ICU admittance&quot;,x=&quot;&quot;,y=&quot;&quot;)+
+  scale_x_continuous(labels=scales::percent)+
+  geom_text(aes(label=death_rate_perc),nudge_x = 0.07, size=3)+
+  coord_fixed(ratio = 0.04)+
+  theme(strip.background = element_rect(
+     color=&quot;black&quot;, fill=&quot;grey&quot;, linetype=&quot;solid&quot;), panel.background = element_rect(fill = &quot;white&quot;),panel.grid=element_line(size=0.5, colour=&quot;#F1F1EB&quot;), panel.border = element_rect(fill=NA))</code></pre>
+<p><img src="/publication/Project1_files/figure-html/unnamed-chunk-5-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
