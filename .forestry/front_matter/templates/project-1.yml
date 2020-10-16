@@ -7,5 +7,3 @@ fields:
   config:
     required: false
   label: R Code
-pages:
-- content/publication/Project1.md
