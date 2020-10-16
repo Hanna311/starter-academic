@@ -15,7 +15,7 @@
 
 [[main]]
   name = "Projects"
-  url = "content/projects/project1"
+  url = "#content/projects/project1"
   weight = 30
 
 [[main]]
